@@ -4,14 +4,18 @@ import os
 from keep_alive import keep_alive
 from discord.ext import commands, tasks
 from itertools import cycle
+import asyncio
+import time 
+import datetime as DT
+import random
+from discord import channel
 
 bot = commands.Bot(command_prefix='!')
-status = cycle(["My", "Cool", "Presence.", "Here", "you", "can", "add", "more!"])
+status = cycle(["py-chat", "Globalchat? | py-chat"])
 
 @bot.event
 async def on_ready():
     change_status.start()
-#    await bot.change_presence(activity=discord.Game("GAME"))
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
@@ -35,11 +39,22 @@ async def on_command_error(ctx, error):
         await ctx.send("This Command is only for my Lord!")
 
         
-bot.remove_command('help')
-
-@bot.command()
-async def help(ctx):
-  await ctx.send("Commands: \nhelp - View this message.")
+@client.event
+async def on_message(message):
+    if message.author.bot: return
+    member = message.author
+    channel = message.channel
+    if channel.name == "py-chat":
+        msg = message.content
+        print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
+        embed = discord.Embed(color=discord.Color.blue(), title=f"{message.author} | {member.guild}", description=msg)
+        embed.set_thumbnail(url=f"{member.avatar_url}")
+        embed.set_footer(text=f"ist auf {len(bot.guilds)} Servern", icon_url=f"{member.guild.icon_url}")
+        embed.timestamp = datetime.datetime.utcnow()
+        await message.delete()
+        for guild in bot.guilds: 
+                channel:discord.Channel = discord.utils.get(guild.channels, name="py-chat")
+                await channel.send(embed=embed)
   
 keep_alive()
 token = os.environ.get("DISCORD_BOT_SECRET")  

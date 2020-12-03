@@ -1,3 +1,3 @@
 # discord-py-template
 
-A simple discord.py Bot Template!
+A simple discord.py global-chat bot!
